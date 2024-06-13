@@ -34,6 +34,30 @@ router.delete('/profile', authMiddleware, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.post('/profile/favorite', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.favoriteMarkers.push(req.body.marker);
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Remove a favorite marker
+router.delete('/profile/favorite/:markerId', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.favoriteMarkers = user.favoriteMarkers.filter(marker => marker._id.toString() !== req.params.markerId);
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 
 // Get all users
 router.get('/', async (req, res) => {

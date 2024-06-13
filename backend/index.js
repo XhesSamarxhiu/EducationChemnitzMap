@@ -9,12 +9,15 @@ import cors from 'cors';
 
 const app = express();
 
-//Middleware for handling CORS Policy
-app.use(cors({ origin: 'http://localhost:5173',
-methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization']}));
+// Middleware for handling CORS Policy
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Allow credentials (cookies, authorization headers, etc.)
+}));
 
-//Middleware for parsing request body
+// Middleware for parsing request body
 app.use(express.json());
 
 // Import Schools, Kindergarden, Social Child Project, Teen Projects routes
@@ -26,11 +29,10 @@ app.use('/socialTeenProjects', socialTeenProjectRoutes);
 // Import User route
 app.use('/users', userRoutes);
 
-
-//Database connection 
-mongoose.connect('mongodb+srv://samarxhiuxhesika:Xhesika1999.@cluster0.vxfzavg.mongodb.net/ChemnitzEducation',)
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.log(err));
+// Database connection 
+mongoose.connect('mongodb+srv://samarxhiuxhesika:Xhesika1999.@cluster0.vxfzavg.mongodb.net/ChemnitzEducation')
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.log(err));
 
 // Server running
 const PORT = process.env.PORT || 3000;

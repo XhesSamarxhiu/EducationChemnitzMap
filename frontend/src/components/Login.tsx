@@ -13,23 +13,34 @@ interface LoginResponse extends String {}
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const loginData: LoginData = { email, password };
-    axios
-      .post<LoginResponse>('http://localhost:3000/users/login', loginData)
-      .then((result) => {
-        console.log('Login response:', result.data);
-        if (result.data === 'Success') {
-          navigate('/home', { replace: true });
-        } else {
-          console.log('Login failed:', result.data);
-        }
-      })
-      .catch((err) => console.log('Error during login:', err));
+
+    try {
+      const response = await axios.post('http://localhost:3000/users/login', loginData);
+      const { token } = response.data;
+
+      if (token) {
+        // Store the token in localStorage or a state management solution
+        localStorage.setItem('token', token);
+        navigate('/home', { replace: true });
+      } else {
+        alert('Invalid email or password');
+      }
+    } catch (err:any) {
+      console.error('Error during login:', err);
+      if (err.response && err.response.data && err.response.data.message) {
+        alert(err.response.data.message as string);
+      } else {
+        alert('An error occurred during login');
+      }
+    }
   };
+
 
   return (
     <div className="flex justify-center items-center bg-gradient-to-r from-yellow-200 to-pink-200 min-h-screen">
